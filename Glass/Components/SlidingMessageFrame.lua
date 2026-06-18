@@ -180,9 +180,8 @@ function SlidingMessageFrameMixin:Init(chatFrame)
     self:AddMessage(...)
   end, true)
 
-  self:Hook(chatFrame.historyBuffer, "PushBack", function (_, message)
-    self:BackFillMessage(nil, message.message, message.r, message.g, message.b)
-  end, true)
+  -- Note: historyBuffer doesn't exist in WotLK 3.3.5
+  -- Message history restoration is not available
 
   -- Hide the default chat frame and show the sliding message frame instead
   self:RawHook(chatFrame, "Show", function ()
@@ -196,13 +195,8 @@ function SlidingMessageFrameMixin:Init(chatFrame)
 
   chatFrame:Hide()
 
-  -- Load any messages already in the chat frame to Glass
-  if chatFrame == DEFAULT_CHAT_FRAME then
-    for i = 1, chatFrame:GetNumMessages() do
-        local text, r, g, b = chatFrame:GetMessageInfo(i);
-        self:AddMessage(chatFrame, text, r, g, b);
-      end
-  end
+  -- Note: GetNumMessages/GetMessageInfo may not exist in WotLK 3.3.5
+  -- Skip loading existing messages from chat frame
 
   -- Listeners
   if self.subscriptions == nil then
@@ -452,6 +446,7 @@ local function CreateSlidingMessageFramePool(parent)
         smf:Unhook(smf.chatFrame, "AddMessage")
         smf:Unhook(smf.chatFrame, "Show")
         smf:Unhook(smf.chatFrame, "Hide")
+        -- Note: historyBuffer doesn't exist in WotLK 3.3.5
       end
 
       if smf.state ~= nil then

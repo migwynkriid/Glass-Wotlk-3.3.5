@@ -23,25 +23,20 @@ function ScrollOverlayFrame:Init()
     self:SetFadeInDuration(0.3)
     self:SetFadeOutDuration(0.15)
 
-    if self.mask == nil then
-      self.mask = self:CreateMaskTexture()
-    end
-    self.mask:SetTexture("Interface\\Addons\\Glass\\Assets\\overlayMask", "CLAMP", "CLAMPTOBLACKADDITIVE")
-    self.mask:SetSize(16, 64)
-    self.mask:SetPoint("CENTER", 0, -32)
+    -- Note: Mask textures are not available in WotLK 3.3.5
+    -- We skip the mask functionality for this version
 
     self:SetGradientBackground(15, 15, Colors.codGray, overlayOpacity)
 
-    self.leftBg:AddMaskTexture(self.mask)
-    self.centerBg:AddMaskTexture(self.mask)
-    self.rightBg:AddMaskTexture(self.mask)
+    -- Note: AddMaskTexture not available in WotLK 3.3.5
 
     -- Down arrow icon
     if self.icon == nil then
       self.icon = self:CreateTexture(nil, "ARTWORK")
     end
     self.icon:SetTexture("Interface\\Addons\\Glass\\Glass\\Assets\\snapToBottomIcon")
-    self.icon:SetSize(16, 16)
+    self.icon:SetWidth(16)
+    self.icon:SetHeight(16)
     self.icon:SetPoint("BOTTOMLEFT", 15, 5)
 
     -- See new messages click area

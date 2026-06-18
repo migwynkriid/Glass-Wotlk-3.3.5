@@ -1,10 +1,10 @@
-## Interface: 80300
+## Interface: 30300
 ## Plain Title: Glass
-## Author: mixxorz
-## Version: 1.7.0
+## Author: mixxorz (Backported to 3.3.5)
+## Version: 1.7.0-wotlk
 
 ## Title: |c00DFBA69Glass|r
-## Notes: Immersive and minimalistic chat UI.
+## Notes: Immersive and minimalistic chat UI. (WotLK Backport)
 
 ## SavedVariables: GlassDB
 
@@ -27,6 +27,7 @@ libs\lodash.wow\lodash.wow.xml
 libs\LibEasing\LibEasing.lua
 
 # Glass
+Glass\compat.lua
 Glass\init.lua
 Glass\constants.lua
 Glass\utils.lua

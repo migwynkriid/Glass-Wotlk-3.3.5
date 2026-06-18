@@ -45,16 +45,26 @@ function ChatTabMixin:Init(slidingMessageFrame)
   local dropDown = _G[self.chatFrame:GetName().."TabDropDown"]
 
   for _, texName in ipairs(tabTexs) do
-    _G[self:GetName()..texName..'Left']:SetTexture()
-    _G[self:GetName()..texName..'Middle']:SetTexture()
-    _G[self:GetName()..texName..'Right']:SetTexture()
+    local leftTex = _G[self:GetName()..texName..'Left']
+    local middleTex = _G[self:GetName()..texName..'Middle']
+    local rightTex = _G[self:GetName()..texName..'Right']
+    if leftTex then leftTex:SetTexture() end
+    if middleTex then middleTex:SetTexture() end
+    if rightTex then rightTex:SetTexture() end
   end
 
   self:SetHeight(Constants.DOCK_HEIGHT)
   self:SetNormalFontObject("GlassChatDockFont")
-  self.Text:ClearAllPoints()
-  self.Text:SetPoint("LEFT", Constants.TEXT_XPADDING, 0)
-  self:SetWidth(self.Text:GetStringWidth() + Constants.TEXT_XPADDING * 2)
+  
+  -- In WotLK 3.3.5, the text element may be accessed differently
+  local tabText = self.Text or _G[self:GetName().."Text"] or self:GetFontString()
+  self.Text = tabText  -- Store reference for later use
+  
+  if tabText then
+    tabText:ClearAllPoints()
+    tabText:SetPoint("LEFT", Constants.TEXT_XPADDING, 0)
+    self:SetWidth(tabText:GetStringWidth() + Constants.TEXT_XPADDING * 2)
+  end
 
   if not self:IsHooked(self, "SetAlpha") then
     self:RawHook(self, "SetAlpha", function (alpha)
@@ -69,19 +79,20 @@ function ChatTabMixin:Init(slidingMessageFrame)
     end, true)
   end
 
-  if not self:IsHooked(self.Text, "SetTextColor") then
-    self:RawHook(self.Text, "SetTextColor", function (...)
+  if tabText and not self:IsHooked(tabText, "SetTextColor") then
+    self:RawHook(tabText, "SetTextColor", function (...)
       -- Temporary chat frames retain their color
       if self.chatFrame.isTemporary then
-        self.hooks[self.Text].SetTextColor(...)
+        self.hooks[tabText].SetTextColor(...)
       else
-        self.hooks[self.Text].SetTextColor(self.Text, Colors.apache.r, Colors.apache.g, Colors.apache.b)
+        self.hooks[tabText].SetTextColor(tabText, Colors.apache.r, Colors.apache.g, Colors.apache.b)
       end
     end, true)
   end
 
   -- Don't highlight when frame is already visible
-  if not self:IsHooked(self.glow, "Show") then
+  -- Note: self.glow may not exist in WotLK 3.3.5
+  if self.glow and not self:IsHooked(self.glow, "Show") then
     self:RawHook(self.glow, "Show", function ()
       if not slidingMessageFrame:IsVisible() then
         self.hooks[self.glow].Show(self.glow)
@@ -92,7 +103,9 @@ function ChatTabMixin:Init(slidingMessageFrame)
   -- Un-highlight when clicked
   if not self:IsHooked(self, "OnClick") then
     self:HookScript(self, "OnClick", function ()
-      FCF_StopAlertFlash(self.chatFrame)
+      if FCF_StopAlertFlash then
+        FCF_StopAlertFlash(self.chatFrame)
+      end
     end)
   end
 

@@ -1,19 +1,11 @@
 local _, Constants = unpack(select(2, ...))
 
--- luacheck: push ignore 113
-local WOW_PROJECT_CLASSIC = WOW_PROJECT_CLASSIC
-local WOW_PROJECT_ID = WOW_PROJECT_ID
--- luacheck: pop
-
 -- Constants
 Constants.DOCK_HEIGHT = 20
 Constants.TEXT_XPADDING = 15
 
-Constants.ENV = "retail"
-
-if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-  Constants.ENV = "classic"
-end
+-- WotLK 3.3.5 environment
+Constants.ENV = "wotlk"
 
 -- Colors
 local function createColor(r, g, b)

@@ -15,10 +15,9 @@ local ChatAlertFrame = ChatAlertFrame
 local ChatFrameChannelButton = ChatFrameChannelButton
 local ChatFrameMenuButton = ChatFrameMenuButton
 local CreateFrame = CreateFrame
-local GetCVar = C_CVar and C_CVar.GetCVar or GetCVar
+local GetCVar = GetCVar
 local NUM_CHAT_WINDOWS = NUM_CHAT_WINDOWS
-local QuickJoinToastButton = QuickJoinToastButton
-local SetCVar = C_CVar and C_CVar.SetCVar or SetCVar
+local SetCVar = SetCVar
 local UIParent = UIParent
 -- luacheck: pop
 
@@ -62,20 +61,23 @@ function UIManager:OnEnable()
   -- Edit box
   self.editBox = CreateEditBox(self.container)
 
-  -- Fix Battle.net Toast frame position
-  BNToastFrame:ClearAllPoints()
-  BNToastFrame:SetPoint("BOTTOMLEFT", ChatAlertFrame, "BOTTOMLEFT", 0, 0)
+  -- Fix Battle.net Toast frame position (if it exists)
+  if BNToastFrame and ChatAlertFrame then
+    BNToastFrame:ClearAllPoints()
+    BNToastFrame:SetPoint("BOTTOMLEFT", ChatAlertFrame, "BOTTOMLEFT", 0, 0)
 
-  ChatAlertFrame:ClearAllPoints()
-  ChatAlertFrame:SetPoint("BOTTOMLEFT", self.container, "TOPLEFT", 15, 10)
-
-  -- Hide other chat elements
-  if Constants.ENV == "retail" then
-    QuickJoinToastButton:Hide()
+    ChatAlertFrame:ClearAllPoints()
+    ChatAlertFrame:SetPoint("BOTTOMLEFT", self.container, "TOPLEFT", 15, 10)
   end
 
-  ChatFrameChannelButton:Hide()
-  ChatFrameMenuButton:Hide()
+  -- Hide other chat elements
+  -- Note: QuickJoinToastButton doesn't exist in WotLK 3.3.5
+  if ChatFrameChannelButton then
+    ChatFrameChannelButton:Hide()
+  end
+  if ChatFrameMenuButton then
+    ChatFrameMenuButton:Hide()
+  end
 
   -- New version alert
   --@non-debug@
@@ -85,8 +87,9 @@ function UIManager:OnEnable()
   end
   --@end-non-debug@--
 
-  -- Force classic chat style
-  if GetCVar("chatStyle") ~= "classic" then
+  -- Force classic chat style (if CVar exists in WotLK)
+  local chatStyleCVar = GetCVar("chatStyle")
+  if chatStyleCVar and chatStyleCVar ~= "classic" then
     SetCVar("chatStyle", "classic")
     Utils.notify('Chat Style set to "Classic Style"')
 

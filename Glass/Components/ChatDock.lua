@@ -10,11 +10,11 @@ local UPDATE_CONFIG = Constants.EVENTS.UPDATE_CONFIG
 
 -- luacheck: push ignore 113
 local Mixin = Mixin
+local CreateFrame = CreateFrame
 local FCFDock_GetInsertIndex = FCFDock_GetInsertIndex
 local FCFDock_HideInsertHighlight = FCFDock_HideInsertHighlight
 local FCF_DockFrame = FCF_DockFrame
 local GENERAL_CHAT_DOCK = GENERAL_CHAT_DOCK
-local GeneralDockManager = GeneralDockManager
 local GetCursorPosition = GetCursorPosition
 local UIParent = UIParent
 -- luacheck: pop
@@ -33,26 +33,27 @@ function ChatDockMixin:Init(parent)
   self:SetFadeInDuration(0.6)
   self:SetFadeOutDuration(0.6)
 
-  self.scrollFrame:SetHeight(Constants.DOCK_HEIGHT)
-  self.scrollFrame:SetPoint("TOPLEFT", _G.ChatFrame2Tab, "TOPRIGHT")
-  self.scrollFrame.child:SetHeight(Constants.DOCK_HEIGHT)
+  -- Note: In WotLK 3.3.5, GeneralDockManager doesn't exist
+  -- We create our own dock frame instead
 
   -- Gradient background
   local opacity = 0.4
   self:SetGradientBackground(50, 250, Colors.black, opacity)
 
   -- Override drag behaviour
-  -- Disable undocking frames
-  self:RawHook("FCF_StopDragging", function (chatFrame)
-    chatFrame:StopMovingOrSizing();
-    _G[chatFrame:GetName().."Tab"]:UnlockHighlight();
+  -- Disable undocking frames (if GENERAL_CHAT_DOCK exists)
+  if GENERAL_CHAT_DOCK and FCFDock_HideInsertHighlight and FCFDock_GetInsertIndex and FCF_DockFrame then
+    self:RawHook("FCF_StopDragging", function (chatFrame)
+      chatFrame:StopMovingOrSizing();
+      _G[chatFrame:GetName().."Tab"]:UnlockHighlight();
 
-    FCFDock_HideInsertHighlight(GENERAL_CHAT_DOCK);
+      FCFDock_HideInsertHighlight(GENERAL_CHAT_DOCK);
 
-    local mouseX, mouseY = GetCursorPosition();
-    mouseX, mouseY = mouseX / UIParent:GetScale(), mouseY / UIParent:GetScale();
-    FCF_DockFrame(chatFrame, FCFDock_GetInsertIndex(GENERAL_CHAT_DOCK, chatFrame, mouseX, mouseY), true);
-  end, true)
+      local mouseX, mouseY = GetCursorPosition();
+      mouseX, mouseY = mouseX / UIParent:GetScale(), mouseY / UIParent:GetScale();
+      FCF_DockFrame(chatFrame, FCFDock_GetInsertIndex(GENERAL_CHAT_DOCK, chatFrame, mouseX, mouseY), true);
+    end, true)
+  end
 
   self:QuickHide()
 
@@ -98,7 +99,11 @@ Core.Components.CreateChatDock = function (parent)
   local GradientBackgroundMixin = Core.Components.GradientBackgroundMixin
 
   isCreated = true
-  local object = Mixin(GeneralDockManager, FadingFrameMixin, GradientBackgroundMixin, ChatDockMixin)
+  
+  -- In WotLK 3.3.5, GeneralDockManager doesn't exist
+  -- We create our own frame instead
+  local frame = CreateFrame("Frame", "GlassChatDock", parent)
+  local object = Mixin(frame, FadingFrameMixin, GradientBackgroundMixin, ChatDockMixin)
   AceHook:Embed(object)
   FadingFrameMixin.Init(object)
   GradientBackgroundMixin.Init(object)

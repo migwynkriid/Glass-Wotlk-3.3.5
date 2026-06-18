@@ -8,11 +8,9 @@ local UNLOCK_MOVER = Constants.EVENTS.UNLOCK_MOVER
 local MoverDialogMixin = {}
 
 -- luacheck: push ignore 113
-local BackdropTemplateMixin = BackdropTemplateMixin
 local CreateFrame = CreateFrame
 local Mixin = Mixin
 local PlaySound = PlaySound
-local SOUNDKIT = SOUNDKIT
 -- luacheck: pop
 
 function MoverDialogMixin:Init()
@@ -34,8 +32,9 @@ function MoverDialogMixin:Init()
   self:SetPoint("TOP", 0, -50)
   self:Hide()
 
-  self:SetScript("OnShow", function() PlaySound(SOUNDKIT.IG_MAINMENU_OPTION) end)
-  self:SetScript("OnHide", function() PlaySound(SOUNDKIT.GS_TITLE_OPTION_EXIT) end)
+  -- WotLK 3.3.5 uses sound file names instead of SOUNDKIT
+  self:SetScript("OnShow", function() PlaySound("igMainMenuOption") end)
+  self:SetScript("OnHide", function() PlaySound("gsTitleOptionExit") end)
 
   self.header = self:CreateTexture(nil, "ARTWORK")
   self.header:SetTexture("Interface\\DialogFrame\\UI-DialogBox-Header")
@@ -73,9 +72,8 @@ function MoverDialogMixin:Init()
 end
 
 Core.Components.CreateMoverDialog = function (name, parent)
-  local frame = CreateFrame(
-    "Frame", name, parent, BackdropTemplateMixin and "BackdropTemplate" or nil
-  )
+  -- In WotLK 3.3.5, we don't need BackdropTemplate - SetBackdrop works directly
+  local frame = CreateFrame("Frame", name, parent)
   local object = Mixin(frame, MoverDialogMixin)
   object:Init()
   return object

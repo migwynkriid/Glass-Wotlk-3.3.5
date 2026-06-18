@@ -22,14 +22,7 @@ function EditBoxMixin:Init(parent)
   self:RawHook(_G[self:GetName().."Mid"], "Show", function () end, true)
   self:RawHook(_G[self:GetName().."Right"], "Show", function () end, true)
 
-  if Constants.ENV == "retail" then
-    _G[self:GetName().."FocusLeft"]:Hide()
-    _G[self:GetName().."FocusMid"]:Hide()
-    _G[self:GetName().."FocusRight"]:Hide()
-    self:RawHook(_G[self:GetName().."FocusLeft"], "Show", function () end, true)
-    self:RawHook(_G[self:GetName().."FocusMid"], "Show", function () end, true)
-    self:RawHook(_G[self:GetName().."FocusRight"], "Show", function () end, true)
-  end
+  -- Note: Focus textures don't exist in WotLK 3.3.5, so we skip them
 
   -- New styling
   self:ClearAllPoints()

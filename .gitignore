@@ -1,0 +1,15 @@
+# Release artifacts
+*.zip
+release/
+changelog.txt
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE/Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/

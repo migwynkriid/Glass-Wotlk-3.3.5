@@ -1,5 +1,35 @@
 # Changelog
 
+## 1.7.0-wotlk (2026-06-18) - WotLK 3.3.5 Backport
+
+**This is a backport of Glass to WoW 3.3.5 (Wrath of the Lich King) for Ascension WoW.**
+
+### Backport Changes
+* Added `compat.lua` compatibility layer with polyfills for missing APIs:
+  - `Mixin()` function for object mixins
+  - `MouseIsOver()` for cursor position checking
+  - `CreateObjectPool()` for object pooling
+  - `C_Timer` functions using OnUpdate frame
+  - `SetColorTexture()` using white texture + SetVertexColor
+  - `SOUNDKIT` constants for sound playback
+  - Various no-op stubs for unsupported features
+* Updated TOC for Interface 30300
+* Replaced `GeneralDockManager` usage with custom dock frame
+* Removed Battle.net pet tooltip support (not in WotLK)
+* Removed Focus texture handling from EditBox (retail only)
+* Removed `BackdropTemplate` dependency
+* Removed `historyBuffer` hooks (API doesn't exist)
+* Added safe checks for optional globals (BNToastFrame, ChatAlertFrame, etc.)
+* Updated hyperlink types for WotLK (added talent, glyph; removed battlepet, currency)
+
+### Known Limitations
+* Indented word wrap not available (API missing)
+* Mask textures disabled (not supported)
+* Message history restoration not available
+* Some visual effects simplified
+
+---
+
 ## 1.7.0 (2020-09-29)
 
 * Add line indention support

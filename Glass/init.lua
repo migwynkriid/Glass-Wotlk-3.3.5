@@ -24,7 +24,7 @@ Core.Libs = {
   lodash = _G.LibStub("lodash.wow")
 }
 Core.Components = {}
-Core.Version = "1.7.0"
+Core.Version = "1.7.0-wotlk"
 --[===[@debug@--
 Core.Version = "DEBUG"
 --@end-debug@]===]--

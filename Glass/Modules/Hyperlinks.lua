@@ -8,22 +8,23 @@ local HYPERLINK_ENTER = Constants.EVENTS.HYPERLINK_ENTER
 local HYPERLINK_LEAVE = Constants.EVENTS.HYPERLINK_LEAVE
 
 -- luacheck: push ignore 113
-local BattlePetToolTip_ShowLink = BattlePetToolTip_ShowLink
-local BattlePetTooltip = BattlePetTooltip
 local GameTooltip = GameTooltip
 local ShowUIPanel = ShowUIPanel
 local UIParent = UIParent
 local strsplit = strsplit
 -- luacheck: pop
 
+-- WotLK 3.3.5 supported link types
 local linkTypes = {
   item = true,
   enchant = true,
   spell = true,
   quest = true,
   achievement = true,
-  currency = true,
-  battlepet = true,
+  talent = true,
+  glyph = true,
+  unit = true,
+  trade = true,
 }
 
 function Hyperlinks:OnInitialize()
@@ -55,17 +56,11 @@ function Hyperlinks:OnEnable()
     local t = string.match(link, "^(.-):")
 
     if linkTypes[t] then
-      if t == "battlepet" then
-        self.state.showingTooltip = BattlePetTooltip
-        GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
-        BattlePetToolTip_ShowLink(text)
-      else
-        self.state.showingTooltip = GameTooltip
-        ShowUIPanel(GameTooltip)
-        GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
-        GameTooltip:SetHyperlink(link)
-        GameTooltip:Show()
-      end
+      self.state.showingTooltip = GameTooltip
+      ShowUIPanel(GameTooltip)
+      GameTooltip:SetOwner(UIParent, "ANCHOR_CURSOR")
+      GameTooltip:SetHyperlink(link)
+      GameTooltip:Show()
     end
   end)
 
